@@ -5,7 +5,10 @@ import heroBg from "@/assets/hero-bg.jfif";
 
 const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
-  const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
+  const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({
+    type: null,
+    message: "",
+  });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,13 +26,23 @@ const ContactSection = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setStatus({ type: "success", message: "Message sent! I'll get back to you soon." });
+        setStatus({
+          type: "success",
+          message: "Message sent successfully. I’ll reply within 24 hours.",
+        });
         setForm({ name: "", email: "", phone: "", subject: "", message: "" });
       } else {
-        setStatus({ type: "error", message: data.error || "Something went wrong." });
+        setStatus({
+          type: "error",
+          message:
+            data.error || "Couldn’t send your message right now. Please try again in a minute.",
+        });
       }
     } catch (err) {
-      setStatus({ type: "error", message: "Failed to connect to the server." });
+      setStatus({
+        type: "error",
+        message: "Network error. Please check your connection and try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -107,7 +120,13 @@ const ContactSection = () => {
                   required
                 />
                 {status.message && (
-                  <div className={`p-3 rounded-xl text-sm ${status.type === "success" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
+                  <div
+                    role={status.type === "error" ? "alert" : "status"}
+                    aria-live="polite"
+                    className={`p-3 rounded-xl text-sm ${
+                      status.type === "success" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                    }`}
+                  >
                     {status.message}
                   </div>
                 )}
